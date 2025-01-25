@@ -3,9 +3,13 @@ import os
 from pathlib import Path
 from shutil import rmtree
 
-from file_types import FileExtension
-from formatting import clean
-from subtitles import extract_subtitles, is_subtitle_directory, rename_subtitle
+from jellyclean.file_types import FileExtension
+from jellyclean.formatting import clean
+from jellyclean.subtitles import (
+    extract_subtitles,
+    is_subtitle_directory,
+    rename_subtitle,
+)
 
 
 logging.basicConfig(format="%(message)s", level=logging.DEBUG)
