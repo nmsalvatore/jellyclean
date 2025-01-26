@@ -1,3 +1,4 @@
+import argparse
 import logging
 import os
 from pathlib import Path
@@ -51,10 +52,20 @@ def process_directory(directory: Path) -> None:
         os.rename(entry, Path(directory, clean_dirname))
 
 
+def main():
+    parser = argparse.ArgumentParser(
+        prog="JellyClean",
+        description="A CLI tool for cleaning up a Jellyfin media directory",
+    )
+    parser.add_argument("directory", type=Path, help="Directory to clean")
+
+    args = parser.parse_args()
+
+    if not os.path.isdir(args.directory):
+        raise ValueError(f"{args.directory} is not a directory")
+
+    process_directory(args.directory)
+
+
 if __name__ == "__main__":
-    entry = Path("test_dir")
-
-    if not os.path.isdir(entry):
-        raise ValueError(f"{entry} is not a directory")
-
-    process_directory(entry)
+    main()
