@@ -1,6 +1,10 @@
 [project]
 name = "jellyclean"
 version = "0.1.0"
+dependencies = ["black", "pytest", "pyright", "ffmpeg-python"]
+
+[project.scripts]
+jellyclean = "jellyclean.jellyclean:main"
 
 [build-system]
 requires = ["setuptools"]
