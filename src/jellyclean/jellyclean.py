@@ -52,7 +52,7 @@ def process_directory(directory: Path) -> None:
         os.rename(entry, Path(directory, clean_dirname))
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         prog="JellyClean",
         description="A CLI tool for cleaning up a Jellyfin media directory",
