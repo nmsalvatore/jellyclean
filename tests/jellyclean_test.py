@@ -9,28 +9,59 @@ from jellyclean.jellyclean import clean_dir
 @pytest.mark.parametrize(
     "original, new",
     [
-        ("Godzilla.Minus.One.2023.1080p.BluRay.x264.YG", "Godzilla.Minus.One.2023"),
-        ("Wonka (2023) [1080p] [WEBRip] [5.1] [YTS.MX]", "Wonka.2023"),
+        ("Justins.First.Date.1991.1080p.BluRay.x264.YYY", "Justins.First.Date.1991"),
         (
-            "2001 A Space Odyssey 1968 Remastered 1080p BluRay",
-            "2001.A.Space.Odyssey.1968",
+            "Victorian Christmas (2023) [1080p] [DVDRip] [5.1]",
+            "Victorian.Christmas.2023",
         ),
-        ("1917.2019.PROPER.1080p.BluRay.x265-RARBG", "1917.2019"),
-        ("Death Race (2000) 1975 720p BluRay Hindi.mkv", "Death.Race.2000.1975.mkv"),
-        ("The.Girl.Next.Door.2004", "The.Girl.Next.Door.2004"),
+        (
+            "2001 A Space Oddity 1999 Remastered 1080p BluRay",
+            "2001.A.Space.Oddity.1999",
+        ),
+        ("1980.2010.PROPER.1080p.BluRay.x265-RARBG", "1980.2010"),
+        ("Feel The Noise 2000 1975 720p BluRay BLURPP", "Feel.The.Noise.2000.1975"),
+        ("Samesies.2004", "Samesies.2004"),
     ],
 )
-def test_rename(original, new):
+def test_rename_directories(original, new):
+    assert rename(original) == new
+
+
+@pytest.mark.parametrize(
+    "original, new",
+    [
+        (
+            "Justins.First.Date.1991.1080p.BluRay.x264.YYY.mkv",
+            "Justins.First.Date.1991.mkv",
+        ),
+        (
+            "Victorian Christmas (2023) [1080p] [DVDRip] [5.1].mp4",
+            "Victorian.Christmas.2023.mp4",
+        ),
+        (
+            "2001 A Space Oddity 1999 Remastered 1080p BluRay.mp4",
+            "2001.A.Space.Oddity.1999.mp4",
+        ),
+        ("1980.2010.PROPER.1080p.BluRay.x265-RARBG.mkv", "1980.2010.mkv"),
+        (
+            "Feel The Noise 2000 1975 720p BluRay BLURPP.mkv",
+            "Feel.The.Noise.2000.1975.mkv",
+        ),
+        ("Samesies.2004.mp4", "Samesies.2004.mp4"),
+    ],
+)
+def test_rename_files(original, new):
     assert rename(original) == new
 
 
 @pytest.mark.parametrize(
     "title",
     [
-        "The.Girl.Next.Door.2004",
-        "2001.A.Space.Odyssey.1968",
-        "1917.2019",
-        "Death.Race.2000.1975",
+        "Samesies.2004",
+        "2001.A.Space.Oddity.1999",
+        "1980.2010",
+        "Feel.The.Noise.2000.1975",
+        "Samesies.2024",
     ],
 )
 def test_valid_directories(title):
@@ -40,10 +71,10 @@ def test_valid_directories(title):
 @pytest.mark.parametrize(
     "title",
     [
-        "The.Girl.Next.Door.2004.mkv",
-        "2001.A.Space.Odyssey.1968.mp4",
-        "1917.2019.mp4",
-        "Death.Race.2000.1975.mkv",
+        "Samesies.2004.mkv",
+        "2001.A.Space.Oddity.1999.mp4",
+        "1980.2010.mp4",
+        "Feel.The.Noise.2000.1975.mkv",
     ],
 )
 def test_valid_files(title):
@@ -53,10 +84,10 @@ def test_valid_files(title):
 @pytest.mark.parametrize(
     "title",
     [
-        "The.Girl.Next.Door.2004.1080p.BluRay",
-        "2001.A.Space.Odyssey (1968)",
-        "Wonka (2023) [1080p] [WEBRip]",
-        "Death.Race.2000.1975.",
+        "Samesies.2004.1080p.BluRay",
+        "2001.A.Space.Oddity (1999)",
+        "Victorian Christmas (2023) [1080p] [DVDRip]",
+        "Feel.The.Noise.2000.1975.",
     ],
 )
 def test_invalid_directories(title):
@@ -66,10 +97,10 @@ def test_invalid_directories(title):
 @pytest.mark.parametrize(
     "title",
     [
-        "The.Girl.Next.Door.2004.1080p.BluRay.mkv",
-        "2001.A.Space.Odyssey (1968).mp4",
-        "Wonka (2023) [1080p] [WEBRip].mkv",
-        "Death.Race.2000.19756.mkv",
+        "Samesies.2004.1080p.BluRay.mkv",
+        "2001.A.Space.Oddity (1999).mp4",
+        "Victorian Christmas (2023) [1080p] [DVDRip]",
+        "Feel.The.Noise.2000.19756.mkv",
     ],
 )
 def test_invalid_files(title):
@@ -80,10 +111,28 @@ def test_invalid_files(title):
 def temp_directory(tmp_path):
     test_dir: Path = tmp_path / "test_dir"
     test_dir.mkdir(exist_ok=True)
+    return test_dir
 
-    messy_name = "My.Home.Movie.2018.720p.DVD.x264.HELLO"
 
-    subdir: Path = test_dir / messy_name
+@pytest.mark.parametrize(
+    "messy_name, clean_name",
+    [
+        ("My.Home.Movie.2018.720p.DVD.x264.HELLO", "My.Home.Movie.2018"),
+        (
+            "Victorian Christmas (2023) [1080p] [DVDRip] [5.1]",
+            "Victorian.Christmas.2023",
+        ),
+        (
+            "2001 A Space Oddity 1999 Remastered 1080p BluRay",
+            "2001.A.Space.Oddity.1999",
+        ),
+        ("1980.2010.PROPER.1080p.BluRay.x265-RARBG", "1980.2010"),
+        ("Feel The Noise 2000 1975 720p BluRay BLURPP", "Feel.The.Noise.2000.1975"),
+        ("Samesies.2004", "Samesies.2004"),
+    ],
+)
+def test_clean_dir(temp_directory, messy_name, clean_name):
+    subdir: Path = temp_directory / messy_name
     subdir.mkdir(exist_ok=True)
     (subdir / f"{messy_name}.mkv").touch()
     (subdir / "1_English.srt").touch()
@@ -91,13 +140,7 @@ def temp_directory(tmp_path):
     (subdir / "Subs" / "English.srt").touch()
     (subdir / "README.md").touch()
 
-    return test_dir
-
-
-def test_clean_dir(temp_directory):
     clean_dir(temp_directory)
-
-    clean_name: str = "My.Home.Movie.2018"
 
     assert (temp_directory / clean_name).exists()
     assert (temp_directory / clean_name).is_dir()
