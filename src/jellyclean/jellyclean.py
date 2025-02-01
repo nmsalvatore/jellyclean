@@ -18,7 +18,7 @@ logging.basicConfig(format="%(message)s", level=logging.DEBUG)
 def clean_dir(directory: Path) -> None:
     """Perform cleanup on contents of provided directory"""
 
-    for entry in map(lambda e: Path(directory, e), os.listdir(directory)):
+    for entry in map(lambda e: (directory / e), os.listdir(directory)):
         subtitle_count: int = 1
 
         if not os.path.isdir(entry):
@@ -29,7 +29,7 @@ def clean_dir(directory: Path) -> None:
 
         clean_dirname: str = reformat(entry.name)
 
-        for subentry in map(lambda e: Path(entry, e), os.listdir(entry)):
+        for subentry in map(lambda e: (entry / e), os.listdir(entry)):
             if subentry.name.endswith((FileExtension.MKV, FileExtension.MP4)):
                 clean_filename: str = reformat(subentry.name)
                 os.rename(subentry, (entry / clean_filename))

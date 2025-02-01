@@ -20,8 +20,8 @@ def valid(entry: str) -> bool:
     """Check if file or directory name is in valid format
 
     Example:
-        Happy.Gilmore.1996
-        Happy.Gilmore.1996.mkv
+        My.Home.Movie.1996
+        My.Home.Movie.1996.mkv
     """
     return re.match(r"^(\w+\.)+\d{4}(.mkv|.mp4)?$", entry) is not None
 
@@ -30,8 +30,8 @@ def rename(original_name: str) -> str:
     """Reformat file and directory names to dot-separated movie title and release year
 
     Example:
-        Happy.Gilmore.1996
-        Happy.Gilmore.1996.mkv
+        My.Home.Movie.1996
+        My.Home.Movie.1996.mkv
     """
 
     cleaned_name: str = re.sub(r"\s", ".", original_name)
