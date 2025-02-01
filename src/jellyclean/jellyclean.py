@@ -37,17 +37,12 @@ def clean_dir(directory: Path) -> None:
             elif subentry.name.endswith(FileExtension.SRT):
                 os.rename(
                     (entry / subentry),
-                    (entry / f"{clean_dirname}.eng.{subtitle_count}.srt")
+                    (entry / f"{clean_dirname}.eng.{subtitle_count}.srt"),
                 )
                 subtitle_count = subtitle_count + 1
 
             elif is_subtitle_directory(subentry):
-                extract_clean_subtitles(
-                    entry,
-                    subentry,
-                    subtitle_count,
-                    clean_dirname
-                )
+                extract_clean_subtitles(entry, subentry, subtitle_count, clean_dirname)
 
             elif os.path.isdir(subentry):
                 rmtree(subentry)
