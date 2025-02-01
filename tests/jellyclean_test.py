@@ -135,7 +135,7 @@ def test_process_directory(temp_directory, messy_name, clean_name):
     subdir: Path = temp_directory / messy_name
     subdir.mkdir(exist_ok=True)
     (subdir / f"{messy_name}.mkv").touch()
-    (subdir / "1_English.srt").touch()
+    (subdir / "English_1.srt").touch()
     (subdir / "Subs").mkdir(exist_ok=True)
     (subdir / "Subs" / "English.srt").touch()
     (subdir / "README.md").touch()
