@@ -13,14 +13,15 @@ def is_subtitle_directory(entry: Path) -> bool:
     )
 
 
-def extract_clean_subtitles(entry: Path, subentry: Path, count: int, clean_name: str) -> None:
+def extract_clean_subtitles(
+    entry: Path, subentry: Path, count: int, clean_name: str
+) -> None:
     """Extract subtitles and remove entry directory"""
 
     for filename in os.listdir(subentry):
         if filename.endswith(FileExtension.SRT) and "eng" in filename.lower():
             os.rename(
-                (entry / subentry / filename),
-                (entry / f"{clean_name}.eng.{count}.srt")
+                (entry / subentry / filename), (entry / f"{clean_name}.eng.{count}.srt")
             )
 
     rmtree(subentry)
