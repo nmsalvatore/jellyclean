@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from jellyclean.formatting import valid, rename
-from jellyclean.jellyclean import clean_dir
+from jellyclean.formatting import valid_name, rename_entry, clean_file
+from jellyclean.jellyclean import process_directory
 
 
 @pytest.mark.parametrize(
@@ -24,7 +24,7 @@ from jellyclean.jellyclean import clean_dir
     ],
 )
 def test_rename_directories(original, new):
-    assert rename(original) == new
+    assert rename_entry(original) == new
 
 
 @pytest.mark.parametrize(
@@ -51,7 +51,7 @@ def test_rename_directories(original, new):
     ],
 )
 def test_rename_files(original, new):
-    assert rename(original) == new
+    assert rename_entry(original) == new
 
 
 @pytest.mark.parametrize(
@@ -65,7 +65,7 @@ def test_rename_files(original, new):
     ],
 )
 def test_valid_directories(title):
-    assert valid(title)
+    assert valid_name(title)
 
 
 @pytest.mark.parametrize(
@@ -78,7 +78,7 @@ def test_valid_directories(title):
     ],
 )
 def test_valid_files(title):
-    assert valid(title)
+    assert valid_name(title)
 
 
 @pytest.mark.parametrize(
@@ -91,7 +91,7 @@ def test_valid_files(title):
     ],
 )
 def test_invalid_directories(title):
-    assert not valid(title)
+    assert not valid_name(title)
 
 
 @pytest.mark.parametrize(
@@ -104,7 +104,7 @@ def test_invalid_directories(title):
     ],
 )
 def test_invalid_files(title):
-    assert not valid(title)
+    assert not valid_name(title)
 
 
 @pytest.fixture
@@ -131,7 +131,7 @@ def temp_directory(tmp_path):
         ("Samesies.2004", "Samesies.2004"),
     ],
 )
-def test_clean_dir(temp_directory, messy_name, clean_name):
+def test_process_directory(temp_directory, messy_name, clean_name):
     subdir: Path = temp_directory / messy_name
     subdir.mkdir(exist_ok=True)
     (subdir / f"{messy_name}.mkv").touch()
@@ -140,7 +140,7 @@ def test_clean_dir(temp_directory, messy_name, clean_name):
     (subdir / "Subs" / "English.srt").touch()
     (subdir / "README.md").touch()
 
-    clean_dir(temp_directory)
+    process_directory(temp_directory)
 
     assert (temp_directory / clean_name).exists()
     assert (temp_directory / clean_name).is_dir()
@@ -148,3 +148,17 @@ def test_clean_dir(temp_directory, messy_name, clean_name):
     assert (temp_directory / clean_name / f"{clean_name}.eng.1.srt").exists()
     assert (temp_directory / clean_name / f"{clean_name}.eng.2.srt").exists()
     assert not (temp_directory / clean_name / "README.md").exists()
+
+
+def test_single_file_cleanup(temp_directory):
+    messy_filename = "My Home Movie (1996).mkv"
+    clean_name = "My.Home.Movie.1996"
+    clean_filename = f"{clean_name}.mkv"
+    single_file = temp_directory / messy_filename
+    single_file.touch()
+
+    clean_file(temp_directory, single_file)
+
+    assert (temp_directory / clean_name).exists()
+    assert (temp_directory / clean_name).is_dir()
+    assert (temp_directory / clean_name / clean_filename).exists()
