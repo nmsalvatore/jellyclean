@@ -89,7 +89,7 @@ def clean_directory(root_directory: Path, entry: Path) -> None:
 
         elif subentry.name.endswith(FileExtension.SRT):
             os.rename(
-                (entry / subentry),
+                subentry,
                 (entry / f"{clean_dirname}.eng.{subtitle_count}.srt"),
             )
             subtitle_count = subtitle_count + 1
