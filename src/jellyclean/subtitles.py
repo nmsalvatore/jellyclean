@@ -20,8 +20,6 @@ def extract_clean_subtitles(
 
     for filename in os.listdir(subentry):
         if filename.endswith(FileExtension.SRT) and "eng" in filename.lower():
-            os.rename(
-                (entry / subentry / filename), (entry / f"{clean_name}.eng.{count}.srt")
-            )
+            os.rename((subentry / filename), (entry / f"{clean_name}.eng.{count}.srt"))
 
     rmtree(subentry)
