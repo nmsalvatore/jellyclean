@@ -1,6 +1,9 @@
+from pathlib import Path
+
 import pytest
 
-from jellyclean.formatting import valid, reformat
+from jellyclean.formatting import valid, rename
+from jellyclean.jellyclean import clean_dir
 
 
 @pytest.mark.parametrize(
@@ -17,8 +20,8 @@ from jellyclean.formatting import valid, reformat
         ("The.Girl.Next.Door.2004", "The.Girl.Next.Door.2004"),
     ],
 )
-def test_reformat(original, new):
-    assert reformat(original) == new
+def test_rename(original, new):
+    assert rename(original) == new
 
 
 @pytest.mark.parametrize(
@@ -71,3 +74,34 @@ def test_invalid_directories(title):
 )
 def test_invalid_files(title):
     assert not valid(title)
+
+
+@pytest.fixture
+def temp_directory(tmp_path):
+    test_dir: Path = tmp_path / "test_dir"
+    test_dir.mkdir(exist_ok=True)
+
+    messy_name = "My.Home.Movie.2018.720p.DVD.x264.HELLO"
+
+    subdir: Path = test_dir / messy_name
+    subdir.mkdir(exist_ok=True)
+    (subdir / f"{messy_name}.mkv").touch()
+    (subdir / "1_English.srt").touch()
+    (subdir / "Subs").mkdir(exist_ok=True)
+    (subdir / "Subs" / "English.srt").touch()
+    (subdir / "README.md").touch()
+
+    return test_dir
+
+
+def test_clean_dir(temp_directory):
+    clean_dir(temp_directory)
+
+    clean_name: str = "My.Home.Movie.2018"
+
+    assert (temp_directory / clean_name).exists()
+    assert (temp_directory / clean_name).is_dir()
+    assert (temp_directory / clean_name / f"{clean_name}.mkv").exists()
+    assert (temp_directory / clean_name / f"{clean_name}.eng.1.srt").exists()
+    assert (temp_directory / clean_name / f"{clean_name}.eng.2.srt").exists()
+    assert not (temp_directory / clean_name / "README.md").exists()
