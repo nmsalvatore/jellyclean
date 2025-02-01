@@ -1,11 +1,11 @@
 import re
 
 
-def clean(og_name: str) -> str:
+def reformat(og_name: str) -> str:
     """Check if file or directory name is valid and reformat if not"""
 
     if not valid(og_name):
-        new_name: str = reformat(og_name)
+        new_name: str = rename(og_name)
 
         if not valid(new_name):
             error_message = "Could not validate entry name after reformat"
@@ -26,7 +26,7 @@ def valid(entry: str) -> bool:
     return re.match(r"^(\w+\.)+\d{4}(.mkv|.mp4)?$", entry) is not None
 
 
-def reformat(original_name: str) -> str:
+def rename(original_name: str) -> str:
     """Reformat file and directory names to dot-separated movie title and release year
 
     Example:
