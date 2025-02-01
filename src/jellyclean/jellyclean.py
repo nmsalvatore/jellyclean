@@ -5,18 +5,17 @@ from pathlib import Path
 from shutil import rmtree
 
 from jellyclean.file_types import FileExtension
-from jellyclean.formatting import clean
+from jellyclean.formatting import reformat
 from jellyclean.subtitles import (
-    extract_subtitles,
+    extract_clean_subtitles,
     is_subtitle_directory,
-    rename_subtitle,
 )
 
 
 logging.basicConfig(format="%(message)s", level=logging.DEBUG)
 
 
-def process_directory(directory: Path) -> None:
+def clean_dir(directory: Path) -> None:
     """Perform cleanup on contents of provided directory"""
 
     for entry in map(lambda e: Path(directory, e), os.listdir(directory)):
@@ -28,20 +27,27 @@ def process_directory(directory: Path) -> None:
 
         logging.info(f"Performing cleanup on {entry}")
 
-        clean_dirname: str = clean(entry.name)
+        clean_dirname: str = reformat(entry.name)
 
         for subentry in map(lambda e: Path(entry, e), os.listdir(entry)):
             if subentry.name.endswith((FileExtension.MKV, FileExtension.MP4)):
-                clean_filename: str = clean(subentry.name)
-                os.rename(subentry, Path(entry, clean_filename))
+                clean_filename: str = reformat(subentry.name)
+                os.rename(subentry, (entry / clean_filename))
 
             elif subentry.name.endswith(FileExtension.SRT):
-                subtitle_count = rename_subtitle(
-                    Path(entry), subentry.name, clean_dirname, subtitle_count
+                os.rename(
+                    (entry / subentry),
+                    (entry / f"{clean_dirname}.eng.{subtitle_count}.srt")
                 )
+                subtitle_count = subtitle_count + 1
 
             elif is_subtitle_directory(subentry):
-                extract_subtitles(subentry, subtitle_count, subtitle_name=clean_dirname)
+                extract_clean_subtitles(
+                    entry,
+                    subentry,
+                    subtitle_count,
+                    clean_dirname
+                )
 
             elif os.path.isdir(subentry):
                 rmtree(subentry)
@@ -49,10 +55,12 @@ def process_directory(directory: Path) -> None:
             else:
                 os.remove(subentry)
 
-        os.rename(entry, Path(directory, clean_dirname))
+        os.rename(entry, (directory / clean_dirname))
 
 
 def main():
+    """Takes a CLI directory argument and cleans the provided directory"""
+
     parser = argparse.ArgumentParser(
         prog="JellyClean",
         description="A CLI tool for cleaning up a Jellyfin media directory",
@@ -64,7 +72,7 @@ def main():
     if not os.path.isdir(args.directory):
         raise ValueError(f"{args.directory} is not a directory")
 
-    process_directory(args.directory)
+    clean_dir(args.directory)
 
 
 if __name__ == "__main__":

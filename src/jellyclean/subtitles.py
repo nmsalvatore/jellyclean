@@ -5,13 +5,6 @@ from shutil import rmtree
 from jellyclean.file_types import FileExtension
 
 
-def rename_subtitle(entry: Path, filename: str, new_name: str, count: int) -> int:
-    """Rename subtitle file and increment count"""
-
-    os.rename(Path(entry, filename), Path(entry, f"{new_name}.eng.{count}.srt"))
-    return count + 1
-
-
 def is_subtitle_directory(entry: Path) -> bool:
     """Check if entry is directory holding subtitles"""
 
@@ -20,11 +13,14 @@ def is_subtitle_directory(entry: Path) -> bool:
     )
 
 
-def extract_subtitles(entry: Path, count: int, *, subtitle_name: str) -> None:
+def extract_clean_subtitles(entry: Path, subentry: Path, count: int, clean_name: str) -> None:
     """Extract subtitles and remove entry directory"""
 
-    for subentry in os.listdir(entry):
-        if "eng" in subentry.lower():
-            count = rename_subtitle(entry, subentry, subtitle_name, count)
+    for filename in os.listdir(subentry):
+        if filename.endswith(FileExtension.SRT) and "eng" in filename.lower():
+            os.rename(
+                (entry / subentry / filename),
+                (entry / f"{clean_name}.eng.{count}.srt")
+            )
 
-    rmtree(entry)
+    rmtree(subentry)
