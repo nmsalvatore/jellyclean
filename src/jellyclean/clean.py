@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 from pathlib import Path
+from time import sleep
 
 from jellyclean.formatting import clean_file, clean_directory
 from jellyclean.file_types import FileExtension
@@ -15,16 +16,14 @@ def process_directory(directory: Path) -> None:
 
     for entry in map(lambda e: (directory / e), os.listdir(directory)):
         if entry.name.endswith((FileExtension.MKV, FileExtension.MP4)):
-            logging.info(f"Performing cleanup on {entry}")
+            logging.info(f"Performing cleanup on {entry.name}")
             clean_file(directory, entry)
 
         if os.path.isdir(entry):
             logging.info(f"Performing cleanup on {entry}")
             clean_directory(directory, entry)
 
-        else:
-            logging.info(f"Ignoring {entry}")
-            continue
+        sleep(0.5)
 
 
 def main() -> None:
