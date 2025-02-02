@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from jellyclean.formatting import valid_name, rename_entry, clean_file
-from jellyclean.jellyclean import process_directory
+from jellyclean.clean import process_directory
 
 
 @pytest.mark.parametrize(
