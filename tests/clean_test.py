@@ -21,7 +21,7 @@ from jellyclean.clean import process_directory
         ),
         ("1980.2010.PROPER.1080p.BluRay.x265-RARBG", "1980.2010"),
         ("Feel The Noise 2000 1975 720p BluRay BLURPP", "Feel.The.Noise.2000.1975"),
-        ("Samesies.2004", "Samesies.2004")
+        ("Samesies.2004", "Samesies.2004"),
     ],
 )
 def test_rename_directories(original, new):
@@ -63,7 +63,7 @@ def test_rename_files(original, new):
         "1980.2010",
         "Feel.The.Noise.2000.1975",
         "Samesies.2024",
-        "Dude-Man.The.Guy.With.The.Stuff.2013"
+        "Dude-Man.The.Guy.With.The.Stuff.2013",
     ],
 )
 def test_valid_directories(title):
@@ -77,7 +77,7 @@ def test_valid_directories(title):
         "2001.A.Space.Oddity.1999.mp4",
         "1980.2010.mp4",
         "Feel.The.Noise.2000.1975.mkv",
-        "Dude-Man.The.Guy.With.The.Stuff.2013.mp4"
+        "Dude-Man.The.Guy.With.The.Stuff.2013.mp4",
     ],
 )
 def test_valid_files(title):
