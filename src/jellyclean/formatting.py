@@ -3,6 +3,7 @@ import re
 from pathlib import Path
 from shutil import rmtree
 
+from jellyclean.checks import valid_name_format
 from jellyclean.file_types import FileExtension
 from jellyclean.subtitles import (
     extract_clean_subtitles,
@@ -13,26 +14,16 @@ from jellyclean.subtitles import (
 def cleanup_name(og_name: str) -> str:
     """Check if file or directory name is valid and reformat if not"""
 
-    if not valid_name(og_name):
+    if not valid_name_format(og_name):
         new_name: str = rename_entry(og_name)
 
-        if not valid_name(new_name):
+        if not valid_name_format(new_name):
             error_message = "Could not validate entry name after reformat"
             raise ValueError(f"{error_message}:\n{og_name} -> {new_name}")
 
         return new_name
 
     return og_name
-
-
-def valid_name(entry: str) -> bool:
-    """Check if file or directory name is in valid format
-
-    Example:
-        My.Home.Movie.1996
-        My.Home.Movie.1996.mkv
-    """
-    return re.match(r"^(\w+\.)+\d{4}(.mkv|.mp4)?$", entry) is not None
 
 
 def rename_entry(original_name: str) -> str:

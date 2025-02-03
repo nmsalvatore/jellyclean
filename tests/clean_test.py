@@ -2,7 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from jellyclean.formatting import valid_name, rename_entry, clean_file
+from jellyclean.formatting import rename_entry, clean_file
+from jellyclean.checks import tv_directory, valid_name_format
 from jellyclean.clean import process_directory
 
 
@@ -62,10 +63,11 @@ def test_rename_files(original, new):
         "1980.2010",
         "Feel.The.Noise.2000.1975",
         "Samesies.2024",
+        "Dude-Man.The.Guy.With.The.Stuff.2013",
     ],
 )
 def test_valid_directories(title):
-    assert valid_name(title)
+    assert valid_name_format(title)
 
 
 @pytest.mark.parametrize(
@@ -75,10 +77,11 @@ def test_valid_directories(title):
         "2001.A.Space.Oddity.1999.mp4",
         "1980.2010.mp4",
         "Feel.The.Noise.2000.1975.mkv",
+        "Dude-Man.The.Guy.With.The.Stuff.2013.mp4",
     ],
 )
 def test_valid_files(title):
-    assert valid_name(title)
+    assert valid_name_format(title)
 
 
 @pytest.mark.parametrize(
@@ -91,7 +94,7 @@ def test_valid_files(title):
     ],
 )
 def test_invalid_directories(title):
-    assert not valid_name(title)
+    assert not valid_name_format(title)
 
 
 @pytest.mark.parametrize(
@@ -104,7 +107,7 @@ def test_invalid_directories(title):
     ],
 )
 def test_invalid_files(title):
-    assert not valid_name(title)
+    assert not valid_name_format(title)
 
 
 @pytest.fixture
@@ -162,3 +165,16 @@ def test_single_file_cleanup(temp_directory):
     assert (temp_directory / clean_name).exists()
     assert (temp_directory / clean_name).is_dir()
     assert (temp_directory / clean_name / clean_filename).exists()
+
+
+def test_tv_directory_match(temp_directory):
+    messy_dirname = "My Home Show (2006) COMPLETE"
+    (temp_directory / messy_dirname).mkdir()
+    (temp_directory / messy_dirname / "My Home Show S0E1 Pilot.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E2 Apples.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E3 Bananas.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E4 Oranges.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E5 Strawberries.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E6 Kiwi.mkv").touch()
+
+    assert tv_directory((temp_directory / messy_dirname))
