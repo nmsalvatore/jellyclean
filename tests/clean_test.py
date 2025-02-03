@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from jellyclean.formatting import valid_name, rename_entry, clean_file
-from jellyclean.checks import is_tv_directory
+from jellyclean.formatting import rename_entry, clean_file
+from jellyclean.checks import tv_directory, valid_name_format
 from jellyclean.clean import process_directory
 
 
@@ -67,7 +67,7 @@ def test_rename_files(original, new):
     ],
 )
 def test_valid_directories(title):
-    assert valid_name(title)
+    assert valid_name_format(title)
 
 
 @pytest.mark.parametrize(
@@ -81,7 +81,7 @@ def test_valid_directories(title):
     ],
 )
 def test_valid_files(title):
-    assert valid_name(title)
+    assert valid_name_format(title)
 
 
 @pytest.mark.parametrize(
@@ -94,7 +94,7 @@ def test_valid_files(title):
     ],
 )
 def test_invalid_directories(title):
-    assert not valid_name(title)
+    assert not valid_name_format(title)
 
 
 @pytest.mark.parametrize(
@@ -107,7 +107,7 @@ def test_invalid_directories(title):
     ],
 )
 def test_invalid_files(title):
-    assert not valid_name(title)
+    assert not valid_name_format(title)
 
 
 @pytest.fixture
@@ -177,4 +177,4 @@ def test_tv_directory_match(temp_directory):
     (temp_directory / messy_dirname / "My Home Show S0E5 Strawberries.mkv").touch()
     (temp_directory / messy_dirname / "My Home Show S0E6 Kiwi.mkv").touch()
 
-    assert is_tv_directory((temp_directory / messy_dirname))
+    assert tv_directory((temp_directory / messy_dirname))
