@@ -77,6 +77,7 @@ def test_valid_directories(title):
         "2001.A.Space.Oddity.1999.mp4",
         "1980.2010.mp4",
         "Feel.The.Noise.2000.1975.mkv",
+        "Dude-Man.The.Guy.With.The.Stuff.2013.mp4"
     ],
 )
 def test_valid_files(title):
