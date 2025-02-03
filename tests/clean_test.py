@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from jellyclean.formatting import valid_name, rename_entry, clean_file
+from jellyclean.checks import is_tv_directory
 from jellyclean.clean import process_directory
 
 
@@ -20,7 +21,7 @@ from jellyclean.clean import process_directory
         ),
         ("1980.2010.PROPER.1080p.BluRay.x265-RARBG", "1980.2010"),
         ("Feel The Noise 2000 1975 720p BluRay BLURPP", "Feel.The.Noise.2000.1975"),
-        ("Samesies.2004", "Samesies.2004"),
+        ("Samesies.2004", "Samesies.2004")
     ],
 )
 def test_rename_directories(original, new):
@@ -62,6 +63,7 @@ def test_rename_files(original, new):
         "1980.2010",
         "Feel.The.Noise.2000.1975",
         "Samesies.2024",
+        "Dude-Man.The.Guy.With.The.Stuff.2013"
     ],
 )
 def test_valid_directories(title):
@@ -162,3 +164,16 @@ def test_single_file_cleanup(temp_directory):
     assert (temp_directory / clean_name).exists()
     assert (temp_directory / clean_name).is_dir()
     assert (temp_directory / clean_name / clean_filename).exists()
+
+
+def test_tv_directory_match(temp_directory):
+    messy_dirname = "My Home Show (2006) COMPLETE"
+    (temp_directory / messy_dirname).mkdir()
+    (temp_directory / messy_dirname / "My Home Show S0E1 Pilot.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E2 Apples.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E3 Bananas.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E4 Oranges.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E5 Strawberries.mkv").touch()
+    (temp_directory / messy_dirname / "My Home Show S0E6 Kiwi.mkv").touch()
+
+    assert is_tv_directory((temp_directory / messy_dirname))
