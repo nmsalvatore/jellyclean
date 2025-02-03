@@ -20,5 +20,5 @@ def valid_name_format(entry: str) -> bool:
         My.Home.Movie.1996.mkv
     """
 
-    match = re.match(r"^(\w+\.)+\d{4}(.mkv|.mp4)?$", entry)
+    match = re.match(r"^(\w+(?:-\w+)?\.)+\d{4}(.mkv|.mp4)?$", entry)
     return match is not None
