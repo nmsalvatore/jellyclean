@@ -6,10 +6,7 @@ from pathlib import Path
 def tv_directory(dir: Path) -> bool:
     """Check if directory contains TV show files"""
 
-    for entry in os.listdir(dir):
-        match = re.search(r"\bS0", entry)
-        return match is not None
-    return False
+    return any(re.search(r"\bS0", entry) for entry in os.listdir(dir))
 
 
 def valid_name_format(entry: str) -> bool:
