@@ -167,7 +167,7 @@ def test_single_file_cleanup(temp_directory):
     assert (temp_directory / clean_name / clean_filename).exists()
 
 
-def test_tv_directory_match(temp_directory):
+def test_valid_tv_directory(temp_directory):
     messy_dirname = "My Home Show (2006) COMPLETE"
     (temp_directory / messy_dirname).mkdir()
     (temp_directory / messy_dirname / "My Home Show S0E1 Pilot.mkv").touch()
@@ -178,3 +178,11 @@ def test_tv_directory_match(temp_directory):
     (temp_directory / messy_dirname / "My Home Show S0E6 Kiwi.mkv").touch()
 
     assert tv_directory((temp_directory / messy_dirname))
+
+
+def test_invalid_tv_directory(temp_directory):
+    messy_dirname = "My Home Movie (2006)"
+    (temp_directory / messy_dirname).mkdir()
+    (temp_directory / messy_dirname / "My Home Movie.mkv").touch()
+
+    assert not tv_directory((temp_directory / messy_dirname))
